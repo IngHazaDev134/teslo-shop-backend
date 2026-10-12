@@ -4,7 +4,8 @@
 
 # Teslo API
 
-### 1. Levantar la base de datos
-```
-docker-compose up -d
-```
+### 1. Clonar proyecto
+### 2. Ejectar ```yarn install o yarn``` para reconstruir los modulos de node
+### 3. Clonar el archivo ```.env.template``` y renombrarlo a ```.env```
+### 4. Levantar la base de datos ```docker-compose up -d```
+### 5. Levantar el proyecto en modo de produccción ```yarn start:dev```
