@@ -1,4 +1,4 @@
-import { Injectable, InternalServerErrorException } from '@nestjs/common';
+import { BadRequestException, Injectable, InternalServerErrorException, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { CreateProductDto } from './dto/create-product.dto';
@@ -9,10 +9,13 @@ import { Repository } from 'typeorm';
 @Injectable()
 export class ProductsService {
 
+  private readonly logger = new Logger('ProductService')    //* Logger para ver en consola los errores que genera el sistema
+
   constructor(
     //* Patron repository
     @InjectRepository(Product) 
-    private readonly productRepository: Repository<Product> // Replace 'Product' with your actual entity name
+    private readonly productRepository: Repository<Product>,  //* Replace 'Product' with your actual entity name
+
 
   ) {}
 
@@ -22,8 +25,8 @@ export class ProductsService {
       const product = this.productRepository.create(createProductDto);
       await this.productRepository.save(product);
       return product;
-    } catch (error) {
-      throw new InternalServerErrorException('Error creating product');
+    } catch (error: any) {
+      this.handleDBExceptions(error);
     }
   }
 
@@ -41,5 +44,18 @@ export class ProductsService {
 
   remove(id: number) {
     return `This action removes a #${id} product`;
+  }
+
+
+  /**
+   * Crearemos una clase privada para controlar los errores o dar los mensajes de error que se generan por
+   * parte del servidor
+   */
+  private handleDBExceptions(error: any){
+    if(error.code === '23505')
+        throw new BadRequestException(error.detail);
+
+      this.logger.error(error)
+      throw new InternalServerErrorException('Unexpected error, check server logs');
   }
 }
