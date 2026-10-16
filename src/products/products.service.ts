@@ -1,10 +1,12 @@
-import { BadRequestException, Injectable, InternalServerErrorException, Logger, NotFoundException } from '@nestjs/common';
+import { BadRequestException, Injectable, InternalServerErrorException, Logger, 
+         NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
 import { Product } from './entities/product.entity';
 import { Repository } from 'typeorm';
+import { PaginationDto } from 'src/common/dtos/pagination.dto';
 
 @Injectable()
 export class ProductsService {
@@ -32,9 +34,13 @@ export class ProductsService {
 
 
   // TODO paginacion
-  async findAll() {
+  async findAll(paginationDto: PaginationDto) {
     try {
-      return await this.productRepository.find();
+      const { limit = 10, offset = 0 } = paginationDto;
+      return await this.productRepository.find({
+        take: limit, skip: offset,
+        // TODO: Relaciones
+      });
     } catch (error) {
       this.handleDBExceptions(error);
     }
