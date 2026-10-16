@@ -22,16 +22,16 @@ export class ProductsController {
     return this.productsService.findAll(paginationDto);
   }
 
-  @Get(':id')
+  @Get(':term')
   findOne(
-    @Param('id', ParseUUIDPipe) id: string
+    @Param('term') term: string
   ) {
-    return this.productsService.findOne(id);
+    return this.productsService.findOne(term);
   }
 
   @Patch(':id')
   update(
-    @Param('id', ParseUUIDPipe) id: string,
+    @Param('id') id: string,
     @Body() updateProductDto: UpdateProductDto
   ) {
     return this.productsService.update(+id, updateProductDto);
