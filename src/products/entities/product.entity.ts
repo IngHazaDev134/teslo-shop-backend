@@ -4,7 +4,7 @@
  * esa tabla, y cada propiedad de la entity sera una columna en esa tabla.+
  */
 
-import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
+import { BeforeInsert, Column, Entity, PrimaryGeneratedColumn } from "typeorm";
 
 
 @Entity()
@@ -51,4 +51,15 @@ export class Product {
 
     //* tags
     //* images
+
+
+    @BeforeInsert()
+    checkSlugInsert() {
+     if(!this.slug){
+        this.slug = this.title
+     }
+     this.slug = this.slug.toLocaleLowerCase().replaceAll(' ','_').replaceAll("'",'')
+    }
+
+    // TODO: @BeforeUpdate()
 }
