@@ -30,20 +30,34 @@ export class ProductsService {
     }
   }
 
-  findAll() {
-    return `This action returns all products`;
+  async findAll() {
+    try {
+      return await this.productRepository.find();
+    } catch (error) {
+      this.handleDBExceptions(error);
+    }
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} product`;
+  async findOne(id: string) {
+    try {
+      return this.productRepository.findOneBy({ id: id})
+    } catch (error) {
+      this.handleDBExceptions(error)
+    }
   }
 
   update(id: number, updateProductDto: UpdateProductDto) {
     return `This action updates a #${id} product`;
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} product`;
+  async remove(id: string) {
+    try {
+      const product = await this.findOne(id);
+      await this.productRepository.delete(id);
+      return `This action removes a #${id} product`;
+    } catch (error) {
+      this.handleDBExceptions(error);
+    }
   }
 
 
