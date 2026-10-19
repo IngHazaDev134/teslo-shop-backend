@@ -39,14 +39,17 @@ export class ProductsService {
   }
 
 
-  // TODO paginacion
   async findAll(paginationDto: PaginationDto) {
     try {
       const { limit = 10, offset = 0 } = paginationDto;
-      return await this.productRepository.find({
+      const products =  await this.productRepository.find({
         take: limit, skip: offset,
-        // TODO: Relaciones
+        relations: { images: true }
       });
+      return products.map(product => ({
+        ...product,
+        images: product.images?.map(img => img.url)
+      }))
     } catch (error) {
       this.handleDBExceptions(error);
     }
@@ -59,7 +62,7 @@ export class ProductsService {
 
     try {
       if(isUUID(term)){
-        product = await this.productRepository.findOneBy({ id: term });
+        product = await this.productRepository.findOneBy({ where: { id: term }, realtions: { images: true }});
       }else{
         const queryBullder = this.productRepository.createQueryBuilder();
         product = await queryBullder.where(`UPPER(title) =:title or slug =:slug`, 
