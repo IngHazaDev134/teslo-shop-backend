@@ -62,11 +62,13 @@ export class ProductsService {
 
     try {
       if(isUUID(term)){
-        product = await this.productRepository.findOneBy({ where: { id: term }, realtions: { images: true }});
+        product = await this.productRepository.findOneBy({ id: term });
       }else{
-        const queryBullder = this.productRepository.createQueryBuilder();
+        const queryBullder = this.productRepository.createQueryBuilder('prod');
         product = await queryBullder.where(`UPPER(title) =:title or slug =:slug`, 
-          { title: term.toUpperCase(), slug: term.toLocaleLowerCase() }).getOne()
+          { title: term.toUpperCase(), slug: term.toLocaleLowerCase() })
+          .leftJoinAndSelect('prod.images','prodImages')
+          .getOne()
       }
 
       if(!product)
@@ -115,5 +117,16 @@ export class ProductsService {
 
       this.logger.error(error)
       throw new InternalServerErrorException('Unexpected error, check server logs');
+  }
+
+  /**
+   * Creamos un nuevo metodo para aplanar las imagenes al momento de mandar la informacion al frontEnd
+   */
+  async findOnePlain(term: string) {
+    const {images = [], ...rest} = await this.findOne(term);
+    return {
+      ...rest,
+      images: images.map( image => image.ulr)
+    }
   }
 }
