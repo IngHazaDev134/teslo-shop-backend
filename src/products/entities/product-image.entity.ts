@@ -18,7 +18,6 @@ export class ProductImage {
     @ManyToOne(
         () => Product,
         (product) => product.images,
-        {cascade: true}
     )
     product: Product
 }
