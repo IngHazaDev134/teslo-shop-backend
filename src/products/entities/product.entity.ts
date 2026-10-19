@@ -4,7 +4,8 @@
  * esa tabla, y cada propiedad de la entity sera una columna en esa tabla.+
  */
 
-import { BeforeInsert, BeforeUpdate, Column, Entity, PrimaryGeneratedColumn } from "typeorm";
+import { BeforeInsert, BeforeUpdate, Column, Entity, PrimaryGeneratedColumn, OneToMany } from "typeorm";
+import { ProductImage } from "./product-image.entity";
 
 
 @Entity()
@@ -52,7 +53,12 @@ export class Product {
     @Column('text', { array: true, default: [] })
     tags: string[];
 
-    //* images
+    @OneToMany(
+        () => ProductImage,
+        (productImage) => productImage.product,
+        {cascade: true}
+    )
+    images?: ProductImage
 
 
     @BeforeInsert()
