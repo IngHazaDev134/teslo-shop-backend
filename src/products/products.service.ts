@@ -19,7 +19,9 @@ export class ProductsService {
     @InjectRepository(Product) 
     private readonly productRepository: Repository<Product>,              //* Replace 'Product' with your actual entity name
     @InjectRepository(ProductImage) 
-    private readonly productImageRepository: Repository<ProductImage>     //* Replace 'ProductImage' with your actual entity name
+    private readonly productImageRepository: Repository<ProductImage>,    //* Replace 'ProductImage' with your actual entity name
+    //* Inyeccion de la cadena de connexión
+    private readonly dataSource: DataSource,
 
   ) {}
 
@@ -81,10 +83,15 @@ export class ProductsService {
 
 
   async update(id: string, updateProductDto: UpdateProductDto) {
-    const product = await this.productRepository.preload({ id: id, ...updateProductDto, images: [] });
+    const { images, ...toUpdate } = updateProductDto;
+
+    const product = await this.productRepository.preload({ id, ...toUpdate});
 
     if(!product)
       throw new NotFoundException(`Product with id: ${id} not found`);
+
+    //* Create query runner
+    const queryRunner = 
 
     try {
       await this.productRepository.save(product);
