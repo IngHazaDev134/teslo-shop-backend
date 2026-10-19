@@ -123,10 +123,10 @@ export class ProductsService {
    * Creamos un nuevo metodo para aplanar las imagenes al momento de mandar la informacion al frontEnd
    */
   async findOnePlain(term: string) {
-    const {images = [], ...rest} = await this.findOne(term);
-    return {
-      ...rest,
-      images: images.map( image => image.ulr)
-    }
+    const product = await this.findOne(term);
+    return {  
+      ...product,
+      images: product?.images?.map(image => image.url)
+    };
   }
 }
