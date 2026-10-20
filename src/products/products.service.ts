@@ -151,4 +151,18 @@ export class ProductsService {
       images: product?.images?.map(image => image.url)
     };
   }
+
+
+  /**
+   * metodo para eliminar todos los productos
+   * @returns 
+   */
+  async deleteAllProduct() {
+    const query = this.productRepository.createQueryBuilder('product');
+    try {
+      return await query.delete().where({}).execute();
+    }catch(error){
+      this.handleDBExceptions(error);
+    }
+  }
 }
