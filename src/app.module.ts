@@ -30,7 +30,8 @@ import { SeedModule } from './seed/seed.module';
       synchronize: true,                          //* Sincronizar la base de datos con las entidades
     }),
     ProductsModule,                               //* Importamos nuestro nuevo módulo de Products
-    CommonModule, SeedModule                                
+    CommonModule, 
+    SeedModule                                
   ],
   controllers: [],
   providers: [],
