@@ -1,23 +1,25 @@
-import { Controller, Post, UploadedFile, UseInterceptors, Module } from '@nestjs/common';
+import { Controller, Post, UploadedFile, UseInterceptors } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 
 import { FilesService } from './files.service';
 
 @Controller('files')
 export class FilesController {
-  constructor(private readonly filesService: FilesService) {}
+  constructor(
+    private readonly filesService: FilesService
+  ) {}
 
   /**
-   * Vamos a hacer la carga de archivos pormedio en un POST
+   * Vamos a hacer la carga de archivos por medio en un POST
    * Siempre o la gran mayoria de tiempo esto se hace mediante un petición de
    * tipo POST
    */
   @Post('product')
-  @UseInterceptors(FileInterceptor)
+  @UseInterceptors(FileInterceptor('file'))
   uploadProductIamage(
-   file: Express.Multer.File
+   @UploadedFile() file: Express.Multer.File
   ){
-    return '';
+    return file;
   }
 
 }
