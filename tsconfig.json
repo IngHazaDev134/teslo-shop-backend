@@ -1,8 +1,9 @@
 {
   "compilerOptions": {
+    "types": ["node", "multer"],
     "module": "nodenext",
-    "strictPropertyInitialization": false,
     "moduleResolution": "nodenext",
+    "strictPropertyInitialization": false,
     "resolvePackageJsonExports": true,
     "esModuleInterop": true,
     "isolatedModules": true,
