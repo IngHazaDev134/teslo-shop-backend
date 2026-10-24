@@ -1,10 +1,10 @@
-import { BadRequestException, Controller, Get, Param, Post, UploadedFile, UseInterceptors } from '@nestjs/common';
+import type { Response } from 'express';
+import { BadRequestException, Controller, Get, Param, Post, Res, UploadedFile, UseInterceptors } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 
 import { diskStorage } from 'multer';
 import { FilesService } from './files.service';
 import { fileFilter, fileNamer } from './helpers';
-import { serialize } from 'v8';
 
 @Controller('files')
 export class FilesController {
@@ -14,12 +14,14 @@ export class FilesController {
 
   @Get('product/:imageName')
   findProductImage(
+    @Res() res: Response,
     @Param('imageName') imageName: string
   ){
 
     const path = this.filesService.getStaticProductImage(imageName);
-    return path;
+    res.sendFile(path);
   }
+
 
   /**
    * Vamos a hacer la carga de archivos por medio en un POST
