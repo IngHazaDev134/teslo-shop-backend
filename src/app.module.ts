@@ -24,7 +24,7 @@ import { FilesModule } from './files/files.module';
       synchronize: true,
     }),
     ServeStaticModule.forRoot({
-      rootPath: join(__dirname,'..','public'),
+      rootPath: join(__dirname,'..','public'),   //* vamos a configurar los directorios estatico
     }),
     ProductsModule,
     CommonModule,
