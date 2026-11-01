@@ -3,16 +3,22 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import { Repository } from 'typeorm';
 import * as bcryt  from 'bcrypt';
-import { CreateUserDto } from './dto';
+import { CreateUserDto, LoginUserDto } from './dto';
 import { User } from './entities/user.entity';
 
 @Injectable()
 export class AuthService {
-
+  
   constructor(
     @InjectRepository(User)
     private readonly userRepository: Repository<User>
   ){}
+
+  async login(loginUserDto: LoginUserDto) {
+    const { email, password } = loginUserDto;
+    const user = await this.userRepository.findOneBy({ email });
+    return user;
+  }
 
   async create(createUserDto: CreateUserDto) {
     try {
