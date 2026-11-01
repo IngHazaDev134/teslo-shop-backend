@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable, InternalServerErrorException } from '@nestjs/common';
+import { BadRequestException, Get, Injectable, InternalServerErrorException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { JwtService } from '@nestjs/jwt';
 
@@ -37,7 +37,6 @@ export class AuthService {
       ...user,
       token: this.getJwtToken({email: user.email})
     };
-    // TODO: Retornar el JWT de acceso
   }
 
 
@@ -61,6 +60,8 @@ export class AuthService {
     }
   }
 
+
+ 
 
   /**
    * 
