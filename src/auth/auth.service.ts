@@ -16,8 +16,19 @@ export class AuthService {
 
   async login(loginUserDto: LoginUserDto) {
     const { email, password } = loginUserDto;
-    const user = await this.userRepository.findOneBy({ email });
+    const user = await this.userRepository.findOne({
+      where: { email },
+      select: { email: true, password: true }
+    });
+
+    if(!user) 
+      throw new BadRequestException('Credentials are not valid (email)');
+
+    if(!bcryt.compareSync(password, user.password)) 
+      throw new BadRequestException('Credentials are not valid (password)');
+
     return user;
+    // TODO: Retornar el JWT de acceso
   }
 
   async create(createUserDto: CreateUserDto) {
