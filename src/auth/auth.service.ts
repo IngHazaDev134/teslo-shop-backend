@@ -14,6 +14,9 @@ export class AuthService {
     private readonly userRepository: Repository<User>
   ){}
 
+
+
+
   async login(loginUserDto: LoginUserDto) {
     const { email, password } = loginUserDto;
     const user = await this.userRepository.findOne({
@@ -31,6 +34,10 @@ export class AuthService {
     // TODO: Retornar el JWT de acceso
   }
 
+
+
+
+
   async create(createUserDto: CreateUserDto) {
     try {
       const { password, ...userData } = createUserDto;
@@ -47,6 +54,8 @@ export class AuthService {
   }
 
 
+
+  
   /**
    * Creamos nuestra clase que se encargar de manejar los errores
    * @param error 
