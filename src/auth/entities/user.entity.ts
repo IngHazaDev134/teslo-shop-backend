@@ -1,4 +1,4 @@
-import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
+import { BeforeInsert, BeforeUpdate, Column, Entity, PrimaryGeneratedColumn } from "typeorm";
 
 /**
  * La entidad es como que tengamos una tabla en la base de datos
@@ -23,4 +23,15 @@ export class User {
 
     @Column('text', { array: true, default: ['user']})
     roles: string[];
+
+    //* Son como triggers que se ejecutan antes de insertar o actualizar un registro en la base de datos
+    @BeforeInsert()
+    checkFieldsBeforeInsert() {
+        this.email = this.email.toLowerCase().trim();
+    }
+
+    @BeforeUpdate()
+    checkFieldsBeforeUpdate() {
+        this.checkFieldsBeforeInsert();
+    }
 }

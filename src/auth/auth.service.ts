@@ -1,17 +1,20 @@
-import { BadRequestException, Inject, Injectable, InternalServerErrorException } from '@nestjs/common';
+import { BadRequestException, Injectable, InternalServerErrorException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { JwtService } from '@nestjs/jwt';
 
 import { Repository } from 'typeorm';
 import * as bcryt  from 'bcrypt';
 import { CreateUserDto, LoginUserDto } from './dto';
 import { User } from './entities/user.entity';
+import { JwtPayload } from './interfaces/jwt-payload.interface';
 
 @Injectable()
 export class AuthService {
   
   constructor(
     @InjectRepository(User)
-    private readonly userRepository: Repository<User>
+    private readonly userRepository: Repository<User>,
+    private readonly jwtService: JwtService
   ){}
 
 
@@ -30,7 +33,10 @@ export class AuthService {
     if(!bcryt.compareSync(password, user.password)) 
       throw new BadRequestException('Credentials are not valid (password)');
 
-    return user;
+    return {
+      ...user,
+      token: this.getJwtToken({email: user.email})
+    };
     // TODO: Retornar el JWT de acceso
   }
 
@@ -46,16 +52,27 @@ export class AuthService {
         password: bcryt.hashSync(password, 10)
       });
       await this.userRepository.save(user);
-      return {...userData};
-      // TODO: Retornar el JWT de acceso
+      return {
+      ...user,
+      token: this.getJwtToken({email: user.email})
+    };
     } catch (error) {
       this.handleDBErrors(error);
     }
   }
 
 
+  /**
+   * 
+   * @param payload 
+   * @returns token as string
+   */
+  private getJwtToken(payload: JwtPayload) {
+    const token = this.jwtService.sign(payload);
+    return token;
+  }
 
-  
+
   /**
    * Creamos nuestra clase que se encargar de manejar los errores
    * @param error 
