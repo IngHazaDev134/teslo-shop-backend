@@ -14,8 +14,27 @@ export class UserRoleGuard implements CanActivate {
   ): boolean | Promise<boolean> | Observable<boolean> {
     
     const validRoles: string[] = this.reflector.get('roles', context.getHandler());
-    console.log(validRoles);
 
-    return true;
+    if(!validRoles || validRoles.length === 0) {
+      return true;
+    }
+
+    if(validRoles.includes('admin')) {
+      return true;
+    }
+
+    const user = context.switchToHttp().getRequest().user;
+
+    if (!user || !user.roles) {
+      return false;
+    }
+
+    for (const role of user.roles) {
+      if (validRoles.includes(role)) {
+        return true;
+      }
+    }
+    throw new Error(`User does not have the required role`);
+
   }
 }
