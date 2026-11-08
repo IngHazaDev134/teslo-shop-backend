@@ -1,6 +1,7 @@
-import { CanActivate, ExecutionContext, Injectable } from '@nestjs/common';
+import { BadRequestException, CanActivate, ExecutionContext, ForbiddenException, Injectable } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 import { Observable } from 'rxjs';
+import { META_ROLES } from 'src/auth/decorators/role-protected.decorator';
 
 @Injectable()
 export class UserRoleGuard implements CanActivate {
@@ -13,28 +14,23 @@ export class UserRoleGuard implements CanActivate {
     context: ExecutionContext,
   ): boolean | Promise<boolean> | Observable<boolean> {
     
-    const validRoles: string[] = this.reflector.get('roles', context.getHandler());
+    const validRoles: string[] = this.reflector.get(META_ROLES, context.getHandler());
 
-    if(!validRoles || validRoles.length === 0) {
-      return true;
-    }
+    if(!validRoles) return true;
+    if(validRoles.length === 0) return true;
 
-    if(validRoles.includes('admin')) {
-      return true;
-    }
+    const req = context.switchToHttp().getRequest();
+    const user = req.user;
 
-    const user = context.switchToHttp().getRequest().user;
+    if(!user) 
+      throw new BadRequestException('User not found in request');
 
-    if (!user || !user.roles) {
-      return false;
-    }
-
-    for (const role of user.roles) {
-      if (validRoles.includes(role)) {
+    for(const role of user.roles){
+      if(validRoles.includes(role)) {
         return true;
       }
     }
-    throw new Error(`User does not have the required role`);
 
+    throw new ForbiddenException('User does not have the required role');
   }
 }
