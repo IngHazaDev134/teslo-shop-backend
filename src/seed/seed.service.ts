@@ -33,13 +33,11 @@ export class SeedService {
   private async deleteTables() {
     await this.productsService.deleteAllProduct(); 
     const queryBuilder = this.userRepository.createQueryBuilder();
-    await queryBuilder.delete().where({}).execute();
+    await queryBuilder.delete().from(User).execute();
   }
 
   private async insertUsers() {
-
     const seedUsers = initialData.users;
-
     const users: User[] = [];
 
     seedUsers.forEach(user => {
